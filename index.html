@@ -58,7 +58,7 @@
     .page {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 5%; text-align: center; opacity: 0; pointer-events: none;
+      padding: 8% 5%; text-align: center; opacity: 0; pointer-events: none;
       transform: translateY(20px); transition: opacity 1.5s ease, transform 1.5s ease;
       background: transparent !important;
     }
@@ -101,10 +101,10 @@
     /* Buttons */
     .btn {
       appearance: none; background: transparent; color: inherit; border: 1px solid currentColor;
-      padding: 12px 32px; font-family: 'Inter', sans-serif; font-size: 0.85rem; letter-spacing: 1px;
+      padding: 14px 34px; font-family: 'Inter', sans-serif; font-size: 0.9rem; letter-spacing: 1px;
       text-transform: uppercase; cursor: pointer; border-radius: 40px; position: relative;
       overflow: hidden; transition: all 0.5s ease; display: inline-flex; align-items: center; justify-content: center;
-      text-decoration: none; margin-top: 2rem;
+      text-decoration: none; margin-top: 2rem; min-height: 52px;
     }
     .btn::before {
       content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -144,7 +144,14 @@
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin: 2.5rem 0;
       width: 100%; max-width: 550px;
     }
-    @media (max-width: 500px) { .cards-container { grid-template-columns: 1fr; } }
+    @media (max-width: 500px) { 
+      .cards-container { grid-template-columns: 1fr; gap: 0.6rem; margin: 1.5rem 0; } 
+      .info-card { padding: 0.8rem 1rem; }
+      .wax-seal { transform: scale(0.85); margin-top: 1.5rem; }
+      #page2-letter p { margin: 0.7rem 0 !important; }
+      .btn { padding: 12px 24px; min-height: 48px; font-size: 0.8rem; }
+      .flex-btn-group { gap: 0.8rem; }
+    }
     
     .info-card {
       background: rgba(253, 246, 240, 0.05); border: 1px solid rgba(201, 168, 76, 0.3);
@@ -217,9 +224,9 @@
       <div class="content-wrapper">
         <p class="sans-label" style="color: var(--gold); margin-bottom: 2.5rem; font-weight: 600; letter-spacing: 3px;">A note from someone who cares</p>
         <div id="page2-letter" style="width: 100%;">
-          <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">The moment I saw this event — your name was the very first thing that came to mind.</p>
+          <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">The moment I saw this event your name was the very first thing that came to mind.</p>
           <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">Something told me you'd feel every word of it.</p>
-          <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">And I'd love — truly love — for you to be there.</p>
+          <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">And I'd love truly love for you to be there.</p>
           <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">Not for anything complicated.</p>
           <p class="letter-line stagger-in serif-sm" style="margin: 1rem 0;">Just a quiet, lovely evening. Two people. Something beautiful, heard together.</p>
         </div>
@@ -280,11 +287,11 @@
       <div class="content-wrapper" id="page4-content" style="transition: transform 1s ease, opacity 1s ease;">
         <h2 class="serif-lg stagger-in" id="p4-title">Would you like to come?</h2>
         <p class="sans-label stagger-in" id="p4-sub" style="font-size: 0.85rem; text-transform:none; letter-spacing:0.5px; opacity: 0.8; max-width: 440px; margin: 1.5rem auto; line-height: 1.8;">
-          You won't have to go alone. Someone's already planning to be there — and they'd love nothing more than to have you beside them. No names. No pressure. Just say the word.
+          You won't have to go alone. Someone's already planning to be there and they'd love nothing more than to have you beside them. No names. No pressure. Just say the word.
         </p>
         <div class="stagger-in flex-btn-group" id="p4-btns">
           <button class="btn btn-solid-dark" onclick="goToPage(5)">Yes, I'd love to 🌸</button>
-          <button class="btn btn-text-only" onclick="goNo()">Not this time</button>
+          <button class="btn btn-text-only" id="btn-no" onclick="goNo()" style="position: relative; z-index: 50;">Not this time</button>
         </div>
       </div>
     </section>
@@ -366,7 +373,7 @@
 
     // WhatsApp Link encoded
     const waMsg = `Maryam.. 🌙
-Someone was thinking of you — and smiled doing it. 🤍
+Someone was thinking of you and smiled doing it. 🤍
 You said yes.. and that means everything.
 I'll be there with you on Wednesday April 15th — The Domain Theatre, Amman. Doors at 7:30 PM.
 Just a quiet lovely evening. Two people. Something worth hearing together. 🕊️
@@ -480,8 +487,32 @@ Leave everything to me. See you there. 🌸`;
 
     window.onload = () => {
       initParticles();
+      initRunawayButton();
       goToPage(1);
     };
+
+    function initRunawayButton() {
+      const btnNo = document.getElementById('btn-no');
+      let dodgeCount = 0;
+      
+      const runaway = (e) => {
+        if(e && e.type === 'touchstart') e.preventDefault();
+        
+        dodgeCount++;
+        const maxDistX = Math.min(window.innerWidth / 2 - 60, 50 + dodgeCount * 15);
+        const maxDistY = Math.min(window.innerHeight / 2 - 60, 50 + dodgeCount * 15);
+        
+        const x = (Math.random() - 0.5) * maxDistX * 2;
+        const y = (Math.random() > 0.5 ? 1 : -1) * (30 + Math.random() * maxDistY);
+        
+        btnNo.style.transition = 'transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+        btnNo.style.transform = `translate(${x}px, ${y}px)`;
+      };
+
+      btnNo.addEventListener('mouseover', runaway);
+      btnNo.addEventListener('touchstart', runaway, {passive: false});
+    }
   </script>
 </body>
 </html>
+https://www.onlinegdb.com/online_html_compiler#tab-stdin
